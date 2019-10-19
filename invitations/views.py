@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import FormView, View
@@ -116,7 +117,7 @@ class AcceptInvite(SingleObjectMixin, View):
         # previously accepted key.
         if app_settings.GONE_ON_ACCEPT_ERROR and \
                 (not invitation or
-                 (invitation and (invitation.accepted or
+                 (invitation and (invitation.accepted_at or
                                   invitation.key_expired()))):
             return HttpResponse(status=410)
 
@@ -131,7 +132,7 @@ class AcceptInvite(SingleObjectMixin, View):
 
         # The invitation was previously accepted, redirect to the login
         # view.
-        if invitation.accepted:
+        if invitation.accepted_at:
             get_invitations_adapter().add_message(
                 self.request,
                 messages.ERROR,
@@ -175,7 +176,7 @@ class AcceptInvite(SingleObjectMixin, View):
 
 
 def accept_invitation(invitation, request, signal_sender):
-    invitation.accepted = True
+    invitation.accepted_at = timezone.now()
     invitation.save()
 
     invite_accepted.send(sender=signal_sender, email=invitation.email)
@@ -188,7 +189,7 @@ def accept_invitation(invitation, request, signal_sender):
 
 
 def accept_invite_after_signup(sender, request, user, **kwargs):
-    invitation = Invitation.objects.filter(email__iexact=user.email).first()
+    invitation = Invitation.objects.filter(email=user.email).first()
     if invitation:
         accept_invitation(invitation=invitation,
                           request=request,

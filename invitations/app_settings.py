@@ -98,5 +98,35 @@ class AppSettings(object):
             "invitations.forms.InvitationAdminChangeForm"
         )
 
+    @property
+    def USE_FULLNAME_FIELD(self):
+        """use fullname instead of first and last name"""
+        return self._setting('USE_FULLNAME_FIELD', False)
+
+    @property
+    def ENABLE_PHONE_FIELD(self):
+        """Enable the phone number field"""
+        return self._setting('ENABLE_PHONE_FIELD', True)
+
+    @property
+    def ENABLE_EMAIL_FIELD(self):
+        """Enable the email number field"""
+        return self._setting('ENABLE_EMAIL_FIELD', True)
+
+    @property
+    def PHONE_FIELD_REQUIRED(self):
+        """Require a phone number"""
+        return self._setting('PHONE_FIELD_REQUIRED', False)
+
+    @property
+    def EMAIL_FIELD_REQUIRED(self):
+        """Require an email address"""
+        return self._setting('EMAIL_FIELD_REQUIRED', True)
+
+    @property
+    def COUNTRY_CODE_DEFAULT(self):
+        """Default country code, when a 10 digit number was provided, prepend"""
+        return self._setting('COUNTRY_CODE_DEFAULT', 1)
+
 
 app_settings = AppSettings('INVITATIONS_')

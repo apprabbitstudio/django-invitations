@@ -9,7 +9,7 @@ InvitationAdminChangeForm = get_invitation_admin_change_form()
 
 
 class InvitationAdmin(admin.ModelAdmin):
-    list_display = ('email', 'sent', 'accepted')
+    list_display = ('email', 'phone', 'sent_at', 'accepted_at', 'created_at')
 
     def get_form(self, request, obj=None, **kwargs):
         if obj:

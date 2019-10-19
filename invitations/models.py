@@ -20,10 +20,14 @@ from .base_invitation import AbstractBaseInvitation
 
 @python_2_unicode_compatible
 class Invitation(AbstractBaseInvitation):
-    email = models.EmailField(unique=True, verbose_name=_('e-mail address'),
+    first_name = models.CharField(blank=True, max_length=30)
+    last_name = models.CharField(blank=True, max_length=150)
+    email = models.EmailField(blank=True, verbose_name=_('e-mail address'),
                               max_length=app_settings.EMAIL_MAX_LENGTH)
-    created = models.DateTimeField(verbose_name=_('created'),
-                                   default=timezone.now)
+    phone = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(verbose_name=_('created at'),
+                                      default=timezone.now)
+
 
     @classmethod
     def create(cls, email, inviter=None, **kwargs):
@@ -37,7 +41,7 @@ class Invitation(AbstractBaseInvitation):
 
     def key_expired(self):
         expiration_date = (
-            self.sent + datetime.timedelta(
+            self.sent_at + datetime.timedelta(
                 days=app_settings.INVITATION_EXPIRY))
         return expiration_date <= timezone.now()
 
@@ -61,7 +65,7 @@ class Invitation(AbstractBaseInvitation):
             email_template,
             self.email,
             ctx)
-        self.sent = timezone.now()
+        self.sent_at = timezone.now()
         self.save()
 
         signals.invite_url_sent.send(

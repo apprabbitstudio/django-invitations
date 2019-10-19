@@ -18,7 +18,7 @@ class BaseInvitationManager(models.Manager):
     def expired_q(self):
         sent_threshold = timezone.now() - timedelta(
             days=app_settings.INVITATION_EXPIRY)
-        q = Q(accepted=True) | Q(sent__lt=sent_threshold)
+        q = Q(accepted_at__isnull=False) | Q(sent_at__lt=sent_threshold)
         return q
 
     def delete_expired_confirmations(self):
