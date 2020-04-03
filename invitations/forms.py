@@ -50,7 +50,7 @@ class CleanEmailMixin(object):
         return email
 
 
-class InviteForm(forms.ModelForm, CleanEmailMixin):
+class InviteForm(forms.Form, CleanEmailMixin):
     def __init__(self, *args, **kwargs):
         super(InviteForm, self).__init__(*args, **kwargs)
         if app_settings.USE_FULLNAME_FIELD:
